@@ -1,0 +1,137 @@
+{% extends "layouts/main_layout.html" %}
+{% load static %}
+{% block title %}
+  Resminama goşmak
+{% endblock title %}
+{% block head %}
+  <link rel="stylesheet" href="{% static 'quill/css/quill.snow.css' %}">
+{% endblock head %}
+{% block body %}
+  <div class="page-header row no-gutters py-4">
+    <div class="col-12 col-sm-4 text-center text-sm-left mb-0">
+      <span class="text-uppercase page-subtitle"></span>
+      <h3 class="page-title">Resminama goşmak</h3>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <form class="add-new-post"
+          method="post"
+          onsubmit="return postValidation();"
+          enctype="multipart/form-data"
+          action="{% url 'web:add-post' %}">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-lg-9 col-md-12">
+          <!-- Add New Post Form -->
+          <div class="card card-small mb-3">
+            <div class="card-body">
+              <input class="form-control form-control-lg mb-1"
+                     type="text"
+                     placeholder="Ady"
+                     id="Filename"
+                     name="Filename">
+              <small class="errorReq mb-3"
+                     style="display: none;
+                            color: red"
+                     id="emptyFilename"><i></i>Bu meýdançany dolduruň</small>
+              <div id="editor-container" class="add-new-post__editor mb-1"></div>
+              <input name="description" value="" style="display: none;" id="description">
+            </div>
+          </div>
+          <!-- / Add New Post Form -->
+        </div>
+        <div class="col-lg-3 col-md-12">
+          <div class='card card-small mb-3'>
+            <div class="card-header border-bottom">
+              <h6 class="m-0">Möhlet</h6>
+            </div>
+            <div class='card-body p-0'>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item p-3">
+                  <input type="date" id="Deadline" value="" name="Date">
+                  <br>
+                  <small class="errorReq" style="display: none; color: red" id="emptyDeadline"><i></i>Hökmän möhleti giriziň</small>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class='card card-small mb-3'>
+            <div class="card-header border-bottom">
+              <h6 class="m-0">Faýl</h6>
+            </div>
+            <div class='card-body p-0'>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item p-3">
+                  <input type="file" id="File" name="file">
+                  <br>
+                  <small class="errorReq"  style="display: none; color: red;" id="emptyFile"><i></i>Faýl ".pdf" ýa-da ".docx" giňeltmesinde bolmaly</small>
+                </li>
+              </ul>
+            </div>
+          </div>
+          {% if persons %}
+            <div class='card card-small mb-3'>
+              <div class="card-header border-bottom">
+                <h6 class="m-0">Ulanyjy</h6>
+                <small class="errorReq"  style="display: none; color: red;" id="emptySelect"><i></i>Kabul ediji ulanyjyny saýlaň</small>
+              </div>
+              <div class='card-body p-0'>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item d-flex px-3">
+                    <!-- Начало блока инициации цепочки пользователей -->
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="basic-addon1">{{ 1 }}</span>
+                      <select class="custom-select custom-select-sm"
+                              style="max-width: 200px"
+                              id="select-1"
+                              name="selectUser-1"
+                              onchange="return hideRecipient();">
+                        <option selected>Ulanyjyny saýlaň</option>
+                        {% for person in persons %}<option value="{{ person }}">{{ person }}</option>{% endfor %}
+                      </select>
+                    </div>
+                  </li>
+                  {% if persons|length > 1 %}
+                    {% with persons|length|add:"-1" as length %}
+                      {% with ''|center:length as range %}
+                        {% for _ in range %}
+                          <li class="list-group-item px-3"
+                              style="display: none"
+                              id="selectUser-{{ forloop.counter|add:'1' }}">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="basic-addon1">{{ forloop.counter|add:"1" }}</span>
+                              <select class="custom-select custom-select-sm"
+                                      style="max-width: 200px"
+                                      id="select-{{ forloop.counter|add:"1" }}"
+                                      name="selectUser-{{ forloop.counter|add:"1" }}"
+                                      onchange="return hideRecipient();">
+                                <option selected>Ulanyjyny saýlaň</option>
+                                {% for person in persons %}<option value="{{ person }}">{{ person }}</option>{% endfor %}
+                              </select>
+                            </div>
+                            <button type="button"
+                                    class="ml-2 btn btn-sm btn-outline-danger mr-1"
+                                    onclick="return less_users({{ forloop.counter|add:"1" }});">—</button>
+                            <!-- Конеч цепочки подписей -->
+                          </li>
+                        {% endfor %}
+                      {% endwith %}
+                    {% endwith %}
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <button type="submit" class="mb-2 btn btn-primary mr-2">Ýüklemek</button>
+    </form>
+  </div>
+{% endblock body %}
+{% block scripts %}
+  {% include "shortcuts/default_scripts.html" %}
+  <script src="{% static 'web/scripts/moment.js' %}"></script>
+  {% comment %} <script src="{% static 'quill/js/quill.min.js' %}"></script> {% endcomment %}
+  <script src="{% static 'web/scripts/app/app-blog-new-post.1.1.0.js' %}"></script>
+  <script src="{% static 'web/scripts/app/app-register-form-validation.js' %}"></script>
+{% endblock scripts %}

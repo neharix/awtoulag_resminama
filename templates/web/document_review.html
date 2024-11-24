@@ -1,0 +1,139 @@
+{% extends "layouts/main_layout.html" %}
+{% load static %}
+{% block title %}
+  Resminamany gözden geçirmek
+{% endblock title %}
+{% block head %}
+  <link rel="stylesheet" href="{% static 'quill/css/quill.snow.css' %}">
+{% endblock head %}
+{% block body %}
+  <div class="page-header row no-gutters py-4">
+    <div class="col-12 col-sm-4 text-center text-sm-left mb-0">
+      <span class="text-uppercase page-subtitle"></span>
+      <h3 class="page-title">Resminamany gözden geçirmek</h3>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg col-md-6 col-sm-6 mb-4">
+        <div class="stats-small stats-small--1 card card-small">
+          <div class="card-body p-0 d-flex">
+            <div class="d-flex flex-column m-auto">
+              <div class="stats-small__data text-center">
+                <span class="stats-small__label text-uppercase">Ýakynda möhleti dolýanlar</span>
+                <h6 class="stats-small__value count my-3">{{ deadlines }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg col-md-6 col-sm-6 mb-4">
+        <div class="stats-small stats-small--1 card card-small">
+          <div class="card-body p-0 d-flex">
+            <div class="d-flex flex-column m-auto">
+              <div class="stats-small__data text-center">
+                <span class="stats-small__label text-uppercase">Tassyklanmalylar</span>
+                <h6 class="stats-small__value count my-3">{{ files_to_sign }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg col-md-4 col-sm-6 mb-4">
+        <div class="stats-small stats-small--1 card card-small">
+          <div class="card-body p-0 d-flex">
+            <div class="d-flex flex-column m-auto">
+              <div class="stats-small__data text-center">
+                <span class="stats-small__label text-uppercase">Meniň resminamalarym</span>
+                <h6 class="stats-small__value count my-3">{{ personal_files }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Small Stats Blocks -->
+    <div class="row">
+      <!-- Discussions Component -->
+      <div class="col-lg-9 col-md-12 col-sm-12 mb-4">
+        <!-- Post Overview -->
+        <div class='card card-small mb-3'>
+          <div class="card-header border-bottom">
+            <h6 class="m-0">Resminama barada giňişleýin</h6>
+          </div>
+          <div class='card-body p-0'>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item p-3">
+                <span class="d-flex mb-2">
+                  <strong class="mr-1">Ady:</strong> {{ filename }}
+                  {#                          <a class="ml-auto" href="{% url 'web:new_document_download' filename %}">Download</a>#}
+                  <button class="btn btn-sm btn-accent ml-auto"
+                          id="publishButton"
+                          onclick="window.location.href='{% url "web:new_document_download" filename %}';">
+                    Ýüklemek
+                  </button>
+                </span>
+                <span class="d-flex mb-2">
+                  <strong class="mr-1">Möhleti:</strong>{{ file_date }}
+                </span>
+                <span class="d-flex mb-2">
+                  <strong class="mr-1">Ýagdaýy:</strong>
+                  {% if status == 'Prosesde' %}
+                    <strong class="text-warning">{{ status }}</strong>
+                  {% else %}
+                    {% if status == "Ret edildi" %}
+                      <strong class="text-danger">{{ status }}</strong>
+                    {% else %}
+                      <strong class="text-success">{{ status }}</strong>
+                    {% endif %}
+                  {% endif %}
+                </span>
+                {% if owner %}
+                  {% for sign in signs %}
+                    <span class="d-flex mb-2">
+                      <strong class="mr-1">{{ sign }}</strong>
+                      <strong class="text-success">Tassyklanan</strong>
+                    </span>
+                  {% endfor %}
+                {% endif %}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-12">
+        <!-- Post Overview -->
+        <div class='card card-small mb-3'>
+          <div class="card-header border-bottom">
+            <h6 class="m-0">Kararlar</h6>
+          </div>
+          <div class="card-header border-bottom mx-auto">
+            {% if owner %}
+              <input type="button"
+                     class="mb-2 btn btn-primary mr-1"
+                     value="Üýtgetmek"
+                     onclick="window.location.href='{% url "web:document_edit" filename %}';">
+            {% endif %}
+            {% if reviewer and not signed %}
+              <input type="button"
+                     class="mb-2 btn btn-success mr-2"
+                     value="Tassyklamak"
+                     onclick="window.location.href='{% url "web:document_sign" filename %}';">
+              <input type="button"
+                     class="mb-2 btn btn-danger mr-2"
+                     value="Ret etmek"
+                     onclick="window.location.href='{% url "web:document_cancel" filename %}';">
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock body %}
+{% block scripts %}
+  {% include "shortcuts/default_scripts.html" %}
+  <script src="{% static 'quill/js/quill.min.js' %}"></script>
+  <script src="{% static 'web/scripts/app/app-blog-new-post.1.1.0.js' %}"></script>
+  <script src="{% static 'web/scripts/app/app-blog-overview.1.1.0.js' %}"></script>
+  <script src="{% static 'web/scripts/app/app-register-form-validation.js' %}"></script>
+{% endblock scripts %}

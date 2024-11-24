@@ -1,0 +1,73 @@
+{% extends "layouts/main_layout.html" %}
+{% load static %}
+{% block title %}
+  Profil
+{% endblock title %}
+{% block body %}
+  <div class="page-header row no-gutters py-4">
+    <div class="col-12 col-sm-4 text-center text-sm-left mb-0">
+      <span class="text-uppercase page-subtitle"></span>
+      <h3 class="page-title">Profil</h3>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <!-- Default Light Table -->
+    <div class="main-content-container container-fluid px-4">
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="card card-small mb-4">
+            <div class="card-header border-bottom">
+              <h6 class="m-0">Giňişleýin maglumat</h6>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item p-3">
+                <div class="row">
+                  <div class="col">
+                    <form method="post" action="{% url 'web:update_account' %}">
+                      {% csrf_token %}
+                      <div class="form-row">
+                        <div class="form-group col-md-6">
+                          <label for="feFirstName">Ulanyjy ady</label>
+                          <input type="text"
+                                 name="username"
+                                 class="form-control"
+                                 id="feFirstName"
+                                 placeholder="Ulanyjy ady"
+                                 value="{{ username }}">
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group col-md-6">
+                          <label for="feEmailAddress">Email</label>
+                          <input type="email"
+                                 class="form-control"
+                                 name="email"
+                                 id="feEmailAddress"
+                                 placeholder="Email"
+                                 value="{{ email }}">
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label for="fePassword">Açar sözi</label>
+                          <input type="password"
+                                 class="form-control"
+                                 name="password"
+                                 id="fePassword"
+                                 placeholder="Açar sözi">
+                        </div>
+                      </div>
+                      <button type="submit" class="btn btn-accent">Täzelemek</button>
+                    </form>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock body %}
+{% block scripts %}
+  {% include "shortcuts/default_scripts.html" %}
+  <script src="{% static 'web/scripts/app/app-blog-overview.1.1.0.js' %}"></script>
+{% endblock scripts %}

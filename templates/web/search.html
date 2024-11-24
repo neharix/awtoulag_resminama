@@ -1,0 +1,120 @@
+{% extends "layouts/main_layout.html" %}
+{% load static %}
+{% block title %}
+  Gözleg
+{% endblock title %}
+{% block body %}
+  <div class="page-header row no-gutters py-4">
+    <div class="col-12 col-sm-4 text-center text-sm-left mb-0">
+      <span class="text-uppercase page-subtitle"></span>
+      <h3 class="page-title">Gözleg netijesi</h3>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <!-- Small Stats Blocks -->
+    <div class="row">
+      <div class="col-lg col-md-6 col-sm-6 mb-4">
+        <div class="stats-small stats-small--1 card card-small">
+          <div class="card-body p-0 d-flex">
+            <div class="d-flex flex-column m-auto">
+              <div class="stats-small__data text-center">
+                <span class="stats-small__label text-uppercase">Скоро истекает</span>
+                <h6 class="stats-small__value count my-3">{{ deadlines }}</h6>
+              </div>
+            </div>
+            <canvas height="120" class="blog-overview-stats-small-1"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg col-md-6 col-sm-6 mb-4">
+        <div class="stats-small stats-small--1 card card-small">
+          <div class="card-body p-0 d-flex">
+            <div class="d-flex flex-column m-auto">
+              <div class="stats-small__data text-center">
+                <span class="stats-small__label text-uppercase">Необходимо подписать</span>
+                <h6 class="stats-small__value count my-3">{{ files_to_sign }}</h6>
+              </div>
+            </div>
+            <canvas height="120" class="blog-overview-stats-small-2"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg col-md-4 col-sm-6 mb-4">
+        <div class="stats-small stats-small--1 card card-small">
+          <div class="card-body p-0 d-flex">
+            <div class="d-flex flex-column m-auto">
+              <div class="stats-small__data text-center">
+                <span class="stats-small__label text-uppercase">Мои документы</span>
+                <h6 class="stats-small__value count my-3">{{ personal_files }}</h6>
+              </div>
+            </div>
+            <canvas height="120" class="blog-overview-stats-small-3"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Small Stats Blocks -->
+    <!-- Default Light Table -->
+    <div class="row">
+      <div class="col">
+        <div class="card card-small mb-4">
+          {% if files_found %}
+            <div class="card-header border-bottom">
+              <h6 class="m-0">Meniň resminamalarym</h6>
+            </div>
+            <div class="card-body p-0 pb-3 text-center">
+              <table class="table mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th scope="col" class="border-0">№</th>
+                    <th scope="col" class="border-0">Ady</th>
+                    <th scope="col" class="border-0">Möhletiniň dolýan wagty</th>
+                    <th scope="col" class="border-0">Ýagdaýy</th>
+                    <th scope="col" class="border-0">Giňişleýin</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for set in files_found %}
+                    {% for document in set %}
+                      <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ document.filename }}</td>
+                        <td>{{ document.date }}</td>
+                        <td>
+                          {% if document.status == 'Prosesde' %}
+                            <strong class="text-warning">{{ document.status }}</strong>
+                          {% else %}
+                            {% if document.status == "Ret edildi" %}
+                              <strong class="text-danger">{{ document.status }}</strong>
+                            {% else %}
+                              <strong class="text-success">{{ document.status }}</strong>
+                            {% endif %}
+                          {% endif %}
+                        </td>
+                        <td>
+                          <input type="button"
+                                 class="mb-2 btn btn-sm btn-primary mr-1"
+                                 value="Görmek"
+                                 onclick="window.location.href='{% url "web:document_review" document.filename %}'">
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="card-header border-bottom">
+              <h6 class="m-0">Hiç zat tapylmady</h6>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <!-- End Default Light Table -->
+  </div>
+{% endblock body %}
+{% block scripts %}
+  {% include "shortcuts/default_scripts.html" %}
+  <script src="{% static 'web/scripts/app/app-blog-overview.1.1.0.js' %}"></script>
+{% endblock scripts %}

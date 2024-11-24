@@ -1,0 +1,144 @@
+{% extends "layouts/main_layout.html" %}
+{% load static %}
+{% block title %}
+  Resminamany üýtgetmek
+{% endblock title %}
+{% block head %}
+  <script src="{% static 'web/scripts/app/app-register-form-validation.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'quill/css/quill.snow.css' %}">
+{% endblock head %}
+{% block body %}
+  <div class="page-header row no-gutters py-4">
+    <div class="col-12 col-sm-4 text-center text-sm-left mb-0">
+      <span class="text-uppercase page-subtitle"></span>
+      <h3 class="page-title">Resminamany üýtgetmek</h3>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <form class="add-new-post"
+          method="post"
+          enctype="multipart/form-data"
+          action="{% url 'web:document_edit_apply' filename %}">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-lg-9 col-md-12">
+          <!-- Add New Post Form -->
+          <div class="card card-small mb-3">
+            <div class="card-body">
+              <input class="form-control form-control-lg mb-1"
+                     type="text"
+                     placeholder="Filename"
+                     id="Filename"
+                     name="Filename"
+                     value="{{ filename }}">
+              <small class="errorReq mb-3"
+                     style="display: none;
+                            color: red"
+                     id="emptyFilename"><i></i> Bu meýdança boş bolup bilmez</small>
+              <div id="editor-container" class="add-new-post__editor mb-1"></div>
+            </div>
+          </div>
+          <!-- / Add New Post Form -->
+        </div>
+        <div class="col-lg-3 col-md-12">
+          <!-- Post Overview -->
+          <div class='card card-small mb-3'>
+            <div class="card-header border-bottom">
+              <h6 class="m-0">Kabul ediji</h6>
+              <small class="errorReq"  style="display: none; color: red;" id="emptySelect"><i></i> Ulanyjy saýlaň</small>
+            </div>
+            <div class='card-body p-0'>
+              <ul class="list-group list-group-flush">
+                {% for rec in recipients %}
+                  <li class="list-group-item d-flex px-3">
+                    <!-- Начало блока инициации цепочки пользователей -->
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="basic-addon1">{{ forloop.counter }}</span>
+                      <select class="custom-select custom-select-sm"
+                              id="select-{{ forloop.counter }}"
+                              style="max-width: 200px"
+                              name="selectUser-{{ forloop.counter }}"
+                              onchange="return hideRecipient();">
+                        <option>Ulanyjy saýlaň</option>
+                        {% for r in recipients %}
+                          {% if r == rec %}
+                            <option value="{{ r }}" selected>{{ r }}</option>
+                          {% else %}
+                            <option value="{{ r }}">{{ r }}</option>
+                          {% endif %}
+                        {% endfor %}
+                        {% for person in persons %}<option value="{{ person }}">{{ person }}</option>{% endfor %}
+                      </select>
+                    </div>
+                    <!-- Конеч цепочки подписей -->
+                  </li>
+                {% endfor %}
+                {% for _ in persons %}
+                  {% with recipients|length as len %}
+                    <li class="list-group-item px-3"
+                        style="display: none"
+                        id="selectUser-{{ forloop.counter|add:'1' }}">
+                      <!-- Начало блока инициации цепочки пользователей -->
+                      <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">{{ forloop.counter|add:len }}</span>
+                        <select class="custom-select custom-select-sm"
+                                style="max-width: 200px"
+                                id="select-{{ forloop.counter|add:len }}"
+                                name="selectUser-{{ forloop.counter|add:len }}"
+                                onchange="return hideRecipient();">
+                          <option selected>Ulanyjy saýlaň</option>
+                          {% for rec in recipients %}<option value="{{ rec }}">{{ rec }}</option>{% endfor %}
+                          {% for person in persons %}<option value="{{ person }}">{{ person }}</option>{% endfor %}
+                        </select>
+                      {% endwith %}
+                    </div>
+                  </li>
+                {% endfor %}
+                <!-- Конеч цепочки подписей -->
+              </ul>
+            </div>
+          </div>
+          <!-- / Post Overview -->
+          <div class='card card-small mb-3'>
+            <div class="card-header border-bottom">
+              <h6 class="m-0">Möhlet</h6>
+            </div>
+            <div class='card-body p-0'>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item p-3">
+                  <input type="date" id="Deadline" value="{{ deadline }}" name="Date">
+                  <br>
+                  <small class="errorReq" style="display: none; color: red" id="emptyDeadline"><i></i> Sene meýdançasy boş bolup bilmez</small>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class='card card-small mb-3'>
+            <div class="card-header border-bottom">
+              <h6 class="m-0">Faýl</h6>
+            </div>
+            <div class='card-body p-0'>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item p-3">
+                  <input type="file" id="File" name="file">
+                  <br>
+                  <small class="errorReq"  style="display: none; color: red;" id="emptyFile"><i></i> Faýly ýüklemek</small>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="mb-2 btn btn-primary mr-2">Tassyklamak</button>
+    </form>
+  </div>
+  <!-- End Small Stats Blocks -->
+{% endblock body %}
+{% block scripts %}
+  {% include "shortcuts/default_scripts.html" %}
+  <script src="{% static 'quill/js/quill.min.js' %}"></script>
+  <script src="{% static 'web/scripts/app/app-blog-new-post.1.1.0.js' %}"></script>
+  <script>hideRecipient();</script>
+{% endblock scripts %}
+</body>
+</html>
